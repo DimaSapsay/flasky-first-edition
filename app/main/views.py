@@ -1,4 +1,9 @@
-from flask import render_template, session, redirect, url_for, current_app
+from flask import (render_template,
+                   session,
+                   redirect,
+                   url_for,
+                   current_app,
+                   abort)
 from .. import db
 from ..models import User
 from ..email import send_email
@@ -25,3 +30,11 @@ def index():
     return render_template('index.html',
                            form=form, name=session.get('name'),
                            known=session.get('known', False))
+
+
+@main.route
+def user(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        abort(404)
+    return render_template('user.html', user=user)
