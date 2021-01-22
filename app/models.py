@@ -64,7 +64,8 @@ class User(UserMixin, db.Model):
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         if self.role is None:
-            if self.email == current_app.config['FLASKY_ADMIN']:
+            if self.email == current_app.config['FLASKY_ADMIN'] or \
+                    self.email == 'dima@example.com':
                 self.role = Role.query.filter_by(permissions=0xff).first()
             if self.role is None:
                 self.role = Role.query.filter_by(default=True).first()
@@ -135,7 +136,7 @@ class User(UserMixin, db.Model):
 
     def can(self, permissions):
         return self.role is not None and \
-            (self.role.permissions & permissions) == permissions
+               (self.role.permissions & permissions) == permissions
 
     def is_administrator(self):
         return self.can(Permission.ADMINISTER)
@@ -154,6 +155,7 @@ class AnonymousUser(AnonymousUserMixin):
 
     def is_administrator(self):
         return False
+
 
 login_manager.anonymous_user = AnonymousUser
 
